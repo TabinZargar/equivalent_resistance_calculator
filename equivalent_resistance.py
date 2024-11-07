@@ -1,12 +1,11 @@
 import numpy as np
 
 
-def parse_circuit_data(circuit_data):
+def parse_circuit_data(input_json):
     # List of nodes and connections
-    nodes = circuit_data["nodes"]
-    input_node, output_node = circuit_data["input_node"], circuit_data["output_node"]
+    nodes, input_node, output_node = circuit_data["nodes"], circuit_data["input_node"], circuit_data["output_node"]
 
-    # Map each node to a matrix index
+    # Map each node to a matrix index with dictionary comprehension
     node_index = {node: i for i, node in enumerate(nodes)}
     num_nodes = len(nodes)
 
@@ -21,6 +20,7 @@ def parse_circuit_data(circuit_data):
 
         # Calculate conductance (1 / resistance)
         conductance = 1 / resistance
+        # Diagonal elements would be positive and the off diagonal elements would be negative
         G[i, i] += conductance
         G[j, j] += conductance
         G[i, j] -= conductance
@@ -30,7 +30,7 @@ def parse_circuit_data(circuit_data):
     input_idx = node_index[input_node]
     output_idx = node_index[output_node]
 
-    # Assume 1V at input node to calculate equivalent resistance
+    # Inject 1A at the input node to calculate equivalent resistance
     I[input_idx] = 1
 
     return G, I, input_idx, output_idx
@@ -48,11 +48,8 @@ def calculate_equivalent_resistance(G, I, input_idx, output_idx):
     # Insert the ground voltage (0V) back into the voltage array at the output index
     V = np.insert(V_reduced, output_idx, 0)
 
-    # Calculate the current flowing into the network from the input node
-    I_total = sum(G[input_idx, j] * (V[input_idx] - V[j]) for j in range(len(V)))
-
     # Equivalent resistance calculation
-    R_eq = V[input_idx] / I_total
+    R_eq = V[input_idx]
     return R_eq
 
 

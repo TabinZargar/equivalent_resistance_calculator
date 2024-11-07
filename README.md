@@ -1,4 +1,4 @@
-Equivalent Resistance Script
+Equivalent Resistance Calculator
 
 A Python Script that calculates the equivalent resistance of any general electrical circuit network represented as a graph. This Script accepts JSON input describing the circuit's nodes, connections, and target nodes for calculating equivalent resistance. The application performs data validation to ensure the input is valid and safe for processing.
 
